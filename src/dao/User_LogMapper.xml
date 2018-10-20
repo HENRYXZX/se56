@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.User_LogDao">	
+	
+	
+	<resultMap id="user_logResultMap" type="domain.User_Log">
+  		<id property="id" column="log_id" />
+  		<result property="content" column="log_content"/>
+  		<result property="time" column="log_time"/>
+  		<association property="user" javaType="User"  select="dao.UserDao.findById" column="u_id"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findByUid" parameterType="int" resultMap="user_logResultMap" >
+		select * from user_log_inf where u_id=#{uid}
+	</select>
+	
+	<!-- 增加SQL -->
+	<!-- 仅插入三个属性，其他使用update插入 -->
+	<insert id="insert" parameterType="User_Log" >
+		
+		insert into
+		user_log_inf(u_id,log_content,log_time)
+		values
+		('${user.id}',#{content},#{time})
+		
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from user_log_inf where log_id=#{id}
+	</delete>
+
+	<!-- 修改SQL -->
+	<update id="update" parameterType="User_Log">
+		update user_log_inf 
+		set 
+		u_id='${user.id}',
+		log_content=#{content},
+		log_time=#{time}
+		where
+		log_id=#{id}
+	</update>
+
+	<!-- 根据ID  SQL -->
+	<select id="findById" parameterType="int" resultMap="user_logResultMap">
+         select * from user_log_inf where log_id=#{id}
+    </select>
+    
+  
+    
+    
+</mapper>

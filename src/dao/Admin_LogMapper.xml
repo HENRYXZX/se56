@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.Admin_LogDao">	
+	
+	
+	<resultMap id="admin_logResultMap" type="domain.Admin_Log">
+  		<id property="id" column="admin_log_id" />
+  		<result property="content" column="admin_log_content"/>
+  		<result property="time" column="admin_log_time"/>
+  		<association property="admin" javaType="Admin"  select="dao.AdminDao.findById" column="admin_id"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findAll" resultMap="admin_logResultMap" >
+		select * from admin_log_inf
+	</select>
+	
+	<!-- 增加SQL -->
+	<!-- 仅插入三个属性，其他使用update插入 -->
+	<insert id="insert" parameterType="Admin_Log" >
+		
+		insert into
+		admin_log_inf(admin_id,admin_log_content,admin_log_time)
+		values
+		('${admin.id}',#{content},#{time})
+		
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from admin_log_inf where admin_log_id=#{id}
+	</delete>
+
+	<!-- 修改SQL -->
+	<update id="update" parameterType="Admin_Log">
+		update admin_log_inf 
+		set 
+		admin_id='${admin.id}',
+		admin_log_content=#{content},
+		admin_log_time=#{time}
+		where
+		admin_log_id=#{id}
+	</update>
+
+	<!-- 根据ID  SQL -->
+	<select id="findById" parameterType="int" resultMap="admin_logResultMap">
+         select * from admin_log_inf where admin_log_id=#{id}
+    </select>
+    
+  
+    
+    
+</mapper>

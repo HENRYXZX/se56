@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.EvaluateDao">	
+	
+	<!-- 查看评论 -->
+	<resultMap id="evaluateResultMap1" type="domain.Evaluate">
+  		<id property="id" column="evaluate_id" />
+  		<result property="uid" column="u_id"/>
+  		<result property="content" column="evaluate_content"/>
+  		<result property="time" column="evaluate_time"/>
+  		<result property="skrNum" column="skr_num"/>
+  		<association property="blog" javaType="Blog"  select="dao.BlogDao.findById" column="blog_id"/>
+	</resultMap>	
+	<!-- 文章显示评论 -->
+	<resultMap id="evaluateResultMap2" type="domain.Evaluate">
+  		<id property="id" column="evaluate_id" />
+  		<result property="content" column="evaluate_content"/>
+  		<result property="time" column="evaluate_time"/>
+  		<result property="skrNum" column="skr_num"/>
+  		<association property="user" javaType="User"  select="dao.UserDao.findByIdOnlyINI" column="u_id"/>
+  		<association property="blog" javaType="Blog"  select="dao.BlogDao.findById" column="blog_id"/>
+  		</resultMap>
+
+	
+	<!-- 文章下评论 -->
+	<select id="findByBlodid" parameterType="int" resultMap="evaluateResultMap2">
+         select * from evaluate_inf where blog_id=#{blogid} order by skr_num DESC
+    </select>
+    <!-- 查看我的评论 -->
+    <select id="findByUid" resultMap="evaluateResultMap2" >
+		select * from evaluate_inf where u_id=#{uid} order by evaluate_time DESC
+	</select>
+	<select id="findById" parameterType="int" resultMap="evaluateResultMap2">
+		select * from evaluate_inf where evaluate_id=#{evaluateid}
+	</select>
+	<!-- 增加SQL -->
+	<!-- 仅插入三个属性，其他使用update插入 -->
+	<insert id="insert" parameterType="Evaluate" useGeneratedKeys="true" keyProperty="id">
+		insert into 
+		evaluate_inf(u_id,blog_id,evaluate_content,evaluate_time)
+		values
+		(#{uid},#{blogid},#{content},#{time})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from evaluate_inf where evaluate_id=#{id}
+	</delete>
+	<delete id="deleteByBlogid" parameterType="int">
+		delete from evaluate_inf where blog_id=#{blogid}
+	</delete>
+	<update id="skrNumAdd" parameterType="int">
+		update evaluate_inf set skr_num=skr_num+1 where evaluate_id=#{id}
+	</update>
+	
+	<update id="skrNumReduce" parameterType="int">
+		update evaluate_inf set skr_num=skr_num-1 where evaluate_id=#{id}
+	</update>
+	
+	
+	
+    
+    
+   
+    
+</mapper>

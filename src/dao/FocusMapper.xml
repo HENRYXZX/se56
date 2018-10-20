@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.FocusDao">	
+	
+	
+	<resultMap id="focus_contactResultMap" type="domain.Focus_contact">
+  		<id property="id" column="focus_id" />
+  		<result property="uid" column="u_id"/>
+  		<result property="time" column="focus_time"/>
+  		<association property="focus_user" javaType="User"  select="dao.UserDao.findByIdOnlyINI" column="focus_u_id"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findAll" resultMap="focus_contactResultMap" >
+		select * from focus_inf
+	</select>
+	
+	<select id="findByUid" parameterType="int" resultMap="focus_contactResultMap">
+         select * from focus_inf where u_id=#{uid}
+    </select>
+    <select id="findMyFans" parameterType="int" resultMap="focus_contactResultMap">
+    	select * from focus_inf where focus_u_id
+    </select>
+    
+    
+	<insert id="insert" parameterType="Focus_contact">
+		insert into 
+		focus_inf(u_id,focus_u_id,focus_time)
+		values
+		(#{uid},'${focus_user.id}',#{time})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from focus_inf where focus_id=#{id}
+	</delete>
+	
+	
+	<delete id="deleteByObject" parameterType="Focus_contact">
+		delete from focus_inf where u_id=#{uid} and focus_u_id='${focus_user.id}'
+	</delete>
+	
+	<!-- 存在验证 -->
+	<select id="existValidate" parameterType="Focus_contact" resultType="int" >
+         select count(focus_id) from focus_inf where u_id=#{uid} and focus_u_id='${focus_user.id}'
+    </select>
+    
+    
+</mapper>

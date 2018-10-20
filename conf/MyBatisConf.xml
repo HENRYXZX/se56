@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+   
+ 	<typeAliases>
+      <typeAlias alias="User" type="domain.User"/> 
+      <typeAlias alias="Admin" type="domain.Admin"/>
+      <typeAlias alias="Blog" type="domain.Blog"/>  
+      <typeAlias alias="Collect_contact" type="domain.Collect_contact"/> 
+      <typeAlias alias="Focus_contact" type="domain.Focus_contact"/> 
+      <typeAlias alias="Love_contact" type="domain.Love_contact"/>
+      <typeAlias alias="Skr_contact" type="domain.Skr_contact"/>
+      <typeAlias alias="Evaluate" type="domain.Evaluate"/> 
+      <typeAlias alias="User_Log" type="domain.User_Log"/> 
+      <typeAlias alias="Admin_Log" type="domain.Admin_Log"/> 
+      <typeAlias alias="Topic" type="domain.Topic"/>
+      <typeAlias alias="HotCache" type="domain.HotCache"/>
+      
+   </typeAliases>  
+   <!-- 配置Mapper文件的路径 -->
+   <mappers>
+       <mapper resource="dao/UserMapper.xml"/>
+       <mapper resource="dao/AdminMapper.xml"/>
+       <mapper resource="dao/BlogMapper.xml"/>
+       <mapper resource="dao/User_LogMapper.xml"/>
+       <mapper resource="dao/Admin_LogMapper.xml"/>
+       <mapper resource="dao/FocusMapper.xml"/>
+       <mapper resource="dao/EvaluateMapper.xml"/>
+       <mapper resource="dao/CollectMapper.xml"/>
+       <mapper resource="dao/LoveMapper.xml"/>
+       <mapper resource="dao/SkrMapper.xml"/>
+       <mapper resource="dao/TopicMapper.xml"/>
+       <mapper resource="dao/HotCacheMapper.xml"/>
+       
+       
+   </mappers>
+   
+</configuration>

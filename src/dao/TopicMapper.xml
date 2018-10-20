@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.TopicDao">	
+	
+	
+	<resultMap id="topicResultMap" type="domain.Topic">
+  		<id property="id" column="topic_id" />
+  		<result property="name"  column="topic_name"/>
+  		<result property="managerid"  column="manage_u_id"/>
+  		<result property="image" column="image"/>
+  		<result property="createTime" column="create_time"/>
+  		<result property="blogNum" column="blog_num"/>
+  		<result property="announcement"  column="topic_announcement"/>
+  		<result property="isprivate" column="isprivate"/>
+  		<result property="status" column="status"/>
+  		<association property="manager" javaType="User"  select="dao.UserDao.findByIdOnlyINI" column="manage_u_id"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findAll" resultMap="topicResultMap" >
+		select * from topic_inf  order by blog_num DESC
+	</select>
+	<select id="searchByTopicName" parameterType="String" resultMap="topicResultMap">
+		select * from topic_inf where topic_name like "%"#{name}"%" order by blog_num
+	</select>
+	<select id="findByUid" parameterType="int" resultMap="topicResultMap">
+		select * from topic_inf where manage_u_id =#{uid}
+	</select>
+	<!-- 增加SQL -->
+	<!-- 仅插入三个属性，其他使用update插入 -->
+	<insert id="insert" parameterType="Topic" >
+		insert into 
+		topic_inf(topic_name,manage_u_id,image,topic_announcement,isprivate,status) 
+		values 
+		(#{name},#{managerid},#{image},#{announcement},#{isprivate},#{status})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from topic_inf where topic_id=#{id}
+	</delete>
+
+	<!-- 修改SQL -->
+	<update id="update" parameterType="Topic">
+		update topic_inf 
+		set 
+		topic_name=#{name},
+		image=#{image},
+		manage_u_id=#{managerid},
+		topic_announcement=#{announcement},
+		create_time=#{createTime},
+		isprivate=#{isprivate},
+		where 
+		topic_id=#{id}
+	</update>
+	<update id="updatePass" parameterType="Topic">
+		update topic_inf set status=#{status},create_time=#{createTime} where topic_id=#{id}
+	</update>
+
+	<!-- 根据ID  SQL -->
+	<select id="findById" parameterType="int" resultMap="topicResultMap">
+         select * from topic_inf where topic_id=#{id}
+    </select>
+    
+    <update id="blogNumAdd" parameterType="int">
+    	update topic_inf set blog_num=blog_num+1 where topic_id=#{id}
+    </update>
+    <update id="blogNumReduce" parameterType="int">
+    	update topic_inf set blog_num=blog_num-1 where topic_id=#{id}
+    </update>
+    
+    
+</mapper>

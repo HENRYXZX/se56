@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.UserDao">	
+	
+	
+	<resultMap id="userResultMap" type="domain.User">
+  		<id property="id" column="u_id" />
+  		<result property="loginName" column="login_name"/>
+  		<result property="loginPassword" column="login_password"/>
+  		<result property="registerTime" column="register_time"/>
+  		<result property="lastLoginTime" column="last_login_time"/>
+  		<result property="name" column="u_name"/>
+  		<result property="gender" column="u_gender"/>
+  		<result property="phone" column="u_phone"/>
+  		<result property="email" column="u_email"/>
+  		<result property="image" column="image"/>
+  		<result property="nickname" column="nickname"/>
+  		<result property="focusNum" column="focus_num"/>
+  		<result property="fansNum" column="fans_num"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findAll" resultMap="userResultMap" >
+		select * from user_inf 
+	</select>
+	<select id="findAllLimit" parameterType="int"   resultMap="userResultMap" >
+		select * from user_inf order by register_time desc limit #{start},10
+	</select> 
+	<select id="findCountOfUser" resultType="int">
+		select count(u_id) from user_inf 
+	</select>
+	
+	<!-- 增加SQL -->
+	<!-- 仅插入三个属性，其他使用update插入 -->
+	<insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		insert into 
+		user_inf(login_name,login_password,register_time,last_login_time,image) 
+		values 
+		(#{loginName},#{loginPassword},#{registerTime},#{lastLoginTime},#{image})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="delete" parameterType="int">
+		delete from user_inf where u_id=#{id}
+	</delete>
+
+	<!-- 修改SQL -->
+	<update id="update" parameterType="User">
+		update user_inf 
+		set 
+		login_name=#{loginName},
+		login_password=#{loginPassword},
+		register_time=#{registerTime},
+		last_login_time=#{lastLoginTime},
+		u_name=#{name},
+		u_gender=#{gender},
+		u_phone=#{phone},
+		u_email=#{email},
+		image=#{image},
+		nickname=#{nickname},
+		focus_num=#{focusNum},
+		fans_num=#{fansNum}
+		where 
+		u_id=#{id}
+	</update>
+	<update id="updateUserInf" parameterType="User">
+		update user_inf 
+		set 
+		u_name=#{name},
+		u_gender=#{gender},
+		u_phone=#{phone},
+		u_email=#{email},
+		nickname=#{nickname}
+		where 
+		u_id=#{id}
+	</update>
+
+	<!-- 根据ID  SQL -->
+	<select id="findById" parameterType="int" resultMap="userResultMap">
+         select * from user_inf where u_id=#{id}
+    </select>
+    <select id="findByIdOnlyINI" parameterType="int" resultMap="userResultMap">
+         select u_id,nickname,image,focus_num,fans_num from user_inf where u_id=#{id}
+    </select>
+    <select id="recommedUser" resultMap="userResultMap">
+    	select u_id,nickname,image,focus_num,fans_num from user_inf  order by fans_num desc limit 0,5
+    </select>
+    
+    <select id="checkLoginName" parameterType="String" resultType="int">
+    	 select count(u_id) from user_inf where login_name=#{loginName}
+    </select>
+    <select id="checkNickname" parameterType="String" resultType="int">
+    	 select count(u_id) from user_inf where nickname=#{nickname}
+    </select>
+    <select id="searchByNickname" parameterType="String" resultMap="userResultMap">
+    	select u_id,nickname,image,fans_num,focus_num,register_time,last_login_time from user_inf where nickname like "%"#{nickname}"%"  order by fans_num desc
+    </select>
+	<update id="focusNumAdd" parameterType="int">
+		update user_inf set focus_num=focus_num+1 where u_id=#{id}
+	</update>
+	<update id="fansNumAdd" parameterType="int">
+		update user_inf set fans_num=fans_num+1 where u_id=#{id}
+	</update>
+	
+	<update id="focusNumReduce" parameterType="int">
+		update user_inf set focus_num=focus_num-1 where u_id=#{id}
+	</update>
+	<update id="fansNumReduce" parameterType="int">
+		update user_inf set fans_num=fans_num-1 where u_id=#{id}
+	</update>
+    
+    
+</mapper>

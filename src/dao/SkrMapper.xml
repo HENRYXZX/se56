@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.SkrDao">	
+	
+	
+	<resultMap id="skr_contactResultMap" type="domain.Skr_contact">
+  		<id property="id" column="skr_id" />
+  		<result property="uid" column="u_id"/>
+  		<result property="evaluate_id" column="evaluate_id"/>
+	</resultMap>	
+	
+	<insert id="insert" parameterType="Skr_contact">
+		insert into 
+		skr_inf(u_id,evaluate_id)
+		values
+		(#{uid},#{evaluate_id})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="deleteByObject" parameterType="Skr_contact">
+		delete from skr_inf where u_id=#{uid} and evaluate_id=#{evaluate_id}
+	</delete>
+	<delete id="deleteByEvaluateid" parameterType="int">
+		delete from skr_inf where evaluate_id=#{evaluate_id}
+	</delete>
+
+	<!-- 存在验证 -->
+	<select id="existValidate" parameterType="Skr_contact" resultType="int"  >
+         select count(skr_id) from skr_inf where u_id=#{uid} and evaluate_id=#{evaluate_id}
+    </select>
+    
+    
+    
+   
+    
+</mapper>

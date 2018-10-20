@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BlogDao">	
+	
+	
+	
+	
+	<resultMap id="blogResultMap" type="domain.Blog">
+  		<id property="id" column="blog_id" />
+
+  		<result property="title" column="blog_title"/>
+  		<result property="wordNum" column="word_num"/>
+  		<result property="readNum" column="read_num"/>
+  		<result property="collectNum" column="collect_num"/>
+  		<result property="loveNum" column="love_num"/>
+  		<result property="commentsNum" column="comments_num"/>
+  		<result property="writerTime" column="writer_time"/>
+  		<result property="content" column="blog_content"/>
+  		<result property="simplyContent" column="simply_content"/>
+  		<result property="status" column="status" />
+  		<result property="canEvaluate" column="canEvaluate"/>
+  		<!--  -->
+  		<association property="user" javaType="User"  select="dao.UserDao.findByIdOnlyINI" column="u_id"/>
+  		<association property="topic" javaType="Topic"  select="dao.TopicDao.findById" column="topic_id"/>
+	</resultMap>	
+	
+	<!-- 不注入topic-->
+	<resultMap id="blogResultMap2" type="domain.Blog">
+  		<id property="id" column="blog_id" />
+  		<result property="topicid" column="topic_id"/>
+  		<result property="title" column="blog_title"/>
+  		<result property="wordNum" column="word_num"/>
+  		<result property="readNum" column="read_num"/>
+  		<result property="collectNum" column="collect_num"/>
+  		<result property="loveNum" column="love_num"/>
+  		<result property="commentsNum" column="comments_num"/>
+  		<result property="writerTime" column="writer_time"/>
+  		<result property="content" column="blog_content"/>
+  		<result property="simplyContent" column="simply_content"/>
+  		<result property="status" column="status" />
+  		<result property="canEvaluate" column="canEvaluate"/>
+  		<!--  -->
+  		<association property="user" javaType="User"  select="dao.UserDao.findByIdOnlyINI" column="u_id"/>
+	</resultMap>
+	<!-- 查询SQL -->
+	<select id="findToshowHome" parameterType="int" resultMap="blogResultMap">
+		select * from blog_inf order by read_num desc,comments_num desc limit #{start},10 
+	</select>
+	<select id="findAllLimit" parameterType="int" resultMap="blogResultMap">
+		select * from blog_inf order by writer_time desc Limit #{start},10
+	</select>
+	
+	<select id="findCountOfBlog" resultType="int">
+		select count(blog_id) from blog_inf 
+	</select>
+	
+	<select id="findByTopicAndNew"   resultMap="blogResultMap" >
+		select * from blog_inf where status=2 and topic_id=#{topicid} order by writer_time desc,blog_id desc limit #{start},10
+	</select>
+	
+	<select id="findByTopicAndHot"   resultMap="blogResultMap" >
+		select * from blog_inf where status=2 and topic_id=#{topicid} order by read_num desc,comments_num desc limit #{start},10
+	</select>
+	
+	<select id="findByTopicPending"  parameterType="int"  resultMap="blogResultMap" >
+		select * from blog_inf where status=1 and topic_id=#{id}
+	</select>
+	
+	<select id="findByTopicFail"  parameterType="int"  resultMap="blogResultMap" >
+		select * from blog_inf where status=-1 and topic_id=#{id}
+	</select>
+	<!--  -->
+	<select id="findByUidAndNew" resultMap="blogResultMap" >
+		select * from blog_inf where u_id=#{uid} order by writer_time desc,blog_id desc limit #{start},10
+	</select>
+	
+	<select id="findByUidAndHot"  resultMap="blogResultMap" >
+		select * from blog_inf where u_id=#{uid} order by read_num desc,comments_num desc limit #{start},10
+	</select>
+	
+	<select id="findByUid"  parameterType="int" resultMap="blogResultMap" >
+		select * from blog_inf where u_id=#{uid} 
+	</select>
+	
+	
+	<select id="findHotInTimeZone" resultType="int"> 
+		select blog_id from blog_inf where writer_time &lt; #{nowTime} and writer_time &gt;#{lastTime} order by read_num desc,comments_num desc limit 0,10
+	</select>
+	
+	<!-- 增加SQL -->
+	
+	<insert id="insert" parameterType="Blog">
+		insert into
+		blog_inf(u_id,blog_title,image,word_num,writer_time,blog_content,simply_content,canEvaluate) 
+		values
+		(#{uid},
+		#{title},
+		#{image},
+		#{wordNum},
+		#{writerTime},
+		#{content},
+		#{simplyContent},
+		#{canEvaluate})
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from blog_inf where blog_id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="Blog">
+		update blog_inf
+		set
+		blog_title=#{title},
+		image=#{image},
+		blog_content=#{content}
+		where
+		blog_id=#{id}
+	</update>
+	
+	
+	
+	<update id="updateTopic" parameterType="Blog">
+		update blog_inf set topic_id=#{topicid} where blog_id=#{id}
+	</update>
+	<update id="updateStatus" parameterType="Blog">
+		update blog_inf set status=#{status} where blog_id=#{id}
+	</update>
+	<update id="updateWhenTopicRemove">
+		update blog_inf set status=0,topic_id=0 where topic_id=#{topicid}
+	</update>
+	
+	
+	<update id="readNumAdd" parameterType="int">
+		update blog_inf set read_num=read_num+1 where blog_id=#{id}
+	</update>
+	<update id="collectNumAdd" parameterType="int">
+		update blog_inf set collect_num=collect_num+1 where blog_id=#{id}
+	</update>
+	<update id="loveNumAdd" parameterType="int">
+		update blog_inf set love_num=love_num+1 where blog_id=#{id}
+	</update>
+	<update id="commentsNumAdd" parameterType="int">
+		update blog_inf set comments_num=comments_num+1 where blog_id=#{id}
+	</update>
+	
+	<update id="collectNumReduce" parameterType="int">
+		update blog_inf set collect_num=collect_num-1 where blog_id=#{id}
+	</update>
+	<update id="loveNumReduce" parameterType="int">
+		update blog_inf set love_num=love_num-1 where blog_id=#{id}
+	</update>
+	<update id="commentsNumReduce" parameterType="int">
+		update blog_inf set comments_num=comments_num-1 where blog_id=#{id}
+	</update>
+	
+	
+	<select id="findById" parameterType="int" resultMap="blogResultMap">
+         select * from blog_inf where blog_id=#{id}
+    </select>
+    <select id="searchByTitle" parameterType="String" resultMap="blogResultMap">
+    	select * from blog_inf where blog_title like "%"#{title}"%" order by read_num
+    </select>
+    
+    
+    
+</mapper>

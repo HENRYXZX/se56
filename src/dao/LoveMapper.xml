@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.LoveDao">	
+	
+	
+	<resultMap id="love_contactResultMap" type="domain.Love_contact">
+  		<id property="id" column="love_id" />
+  		<result property="uid" column="u_id"/>
+  		<result property="time" column="love_time"/>
+  		<association property="blog" javaType="Blog"  select="dao.BlogDao.findById" column="blog_id"/>
+	</resultMap>	
+	<!-- 查询SQL -->
+	<select id="findAll" resultMap="love_contactResultMap" >
+		select * from love_inf
+	</select>
+	
+	<select id="findByUid" parameterType="int" resultMap="love_contactResultMap">
+         select * from love_inf where u_id=#{uid} order by love_time desc 
+    </select>
+	<select id="findByBlogid" parameterType="int" resultMap="love_contactResultMap">
+		select id,uid from love_inf where blog_id=#{blogid}
+	</select>
+	
+	<insert id="insert" parameterType="Love_contact" >
+		insert into 
+		love_inf(u_id,blog_id,love_time)
+		values
+		(#{uid},'${blog.id}',#{time})
+	</insert>
+
+	<!-- 删除SQL -->
+	<delete id="deleteByObject" parameterType="Love_contact">
+		delete from love_inf where u_id=#{uid} and blog_id='${blog.id}'
+	</delete>
+	<delete id="deleteByBlogid" parameterType="int">
+		delete from love_inf where blog_id=#{blogid}
+	</delete>
+	
+    <select id="existValidate" parameterType="Love_contact" resultType="int" >
+         select count(love_id) from love_inf where u_id=#{uid} and blog_id='${blog.id}'
+    </select>
+    
+    
+   
+    
+</mapper>
