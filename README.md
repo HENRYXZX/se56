@@ -1,5 +1,3 @@
-### 小简书博客系统后台代码
-使用技术
+### 小简书博客系统后台
 - Spring + SpringMVC + Mybatis
 - MySQL5.6
-- 
